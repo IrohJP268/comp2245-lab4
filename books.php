@@ -17,6 +17,20 @@ $sql = 'SELECT books.title, books.author, books.year,
         WHERE (books.title LIKE :title OR books.author LIKE :author)';
 $params = [':title' => $pattern, ':author' => $pattern];
 
+// Optional filter: query by subject id
+$subject = filter_input(INPUT_GET, 'subject', FILTER_VALIDATE_INT,
+                        ['options' => ['min_range' => 1]]);
+if (is_int($subject)) {
+    $sql .= ' AND books.subject_id = :subject';
+    $params[':subject'] = $subject;
+}
+
+// Optional filter: at least one copy on the shelf
+if (($_GET['available'] ?? '') === '1') {
+    $sql .= ' AND books.copies - books.on_loan > 0';
+}
+
+
 $sql .= ' ORDER BY books.title';
 
 $stmt = $pdo->prepare($sql);
