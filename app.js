@@ -2,6 +2,7 @@ const subjectSelect = document.querySelector('#subject');
 const form = document.querySelector('#search-form');
 const statusEl = document.querySelector('#status');
 const tbody = document.querySelector('#results tbody');
+const button = form.querySelector('button[type="submit"]');
 
 async function loadSubjects() {
   try {
@@ -24,6 +25,8 @@ async function loadSubjects() {
 
 async function searchBooks() {
   const params = new URLSearchParams(new FormData(form));
+  button.disabled = true;
+  statusEl.textContent = 'Searching…';
 
   try {
     const response = await fetch(`books.php?${params}`);
@@ -60,15 +63,22 @@ async function searchBooks() {
     } else {
       statusEl.textContent = `${books.length} books found.`;
     }
-  } catch (error) {
+    } catch (error) {
     console.error(error);
+    tbody.replaceChildren();
+    statusEl.textContent = "Couldn't load the books. Please try again.";
+  } finally {
+    button.disabled = false;
   }
 }
+  
 
 form.addEventListener('submit', (event) => {
   event.preventDefault();
   searchBooks();
 });
+subjectSelect.addEventListener('change', searchBooks);
+document.querySelector('#available').addEventListener('change', searchBooks);
 
 searchBooks();
 
