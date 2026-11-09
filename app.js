@@ -8,7 +8,7 @@ async function loadSubjects() {
   try {
     const response = await fetch('subjects.php');
     if (!response.ok) {
-      throw new Error(`subjects.php failed: ${response.status}`);
+      throw new Error(`Could not connect to the database: ${response.status}`);
     }
     const subjects = await response.json();
 
@@ -31,7 +31,7 @@ async function searchBooks() {
   try {
     const response = await fetch(`books.php?${params}`);
     if (!response.ok) {
-      throw new Error(`books.php failed: ${response.status}`);
+      throw new Error(`Could not connect to the database: ${response.status}`);
     }
     const books = await response.json();
 
